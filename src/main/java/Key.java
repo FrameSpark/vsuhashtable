@@ -1,51 +1,82 @@
 import java.math.BigInteger;
 import java.util.Map;
 
-public class Key implements Map.Entry {
+public class Key  {
 
-    private Student student;
     private int key;
+    private int p; //Текущая степень
 
-    public Key(int key) {
+    public Key(int key, int p) {
         this.key = key;
+        this.p = p;
     }
 
     //Ищем наибольшую цифру в ключе для определения системы счисления
     private int getCurrentLevelNumSystem(){
        int digit;
-       int max = key %10;
-        while (key != 0) {
-            digit = key % 10;
+       int k = key;
+       int max = k %10;
+        while (k != 0) {
+            digit = k % 10;
             if(digit > max){
                 max = digit;
             }
-            key /= 10;
+            k /= 10;
         }
         return max+1;
     }
 
-    //Функция высчитывания хеша по значению
+
     public Object getKey() {
         return key;
     }
 
-    public Object getValue() {
-        return this.student;
+
+    //Перевод в десятичную систему
+    private int To10System(int currentStepen){
+        int value = key;
+        int result = 0;
+
+        int length = (int)Math.log10( value );
+
+        for (int i = 0; i <= length; i++) {
+
+            int a = value % 10;
+            value /= 10;
+
+            result += a * (int)Math.pow( currentStepen, (double)i );
+        }
+
+        return result;
     }
 
-    public Object setValue(Object value) {
-        this.student = (Student) value;
-        return student;
+    //Из 10 в любую
+    private int From10ToAny(int value , int stepen) {
+
+
+        String result = "";
+        int p,q;
+        while ( value % stepen > 0 || value/stepen != 0) {
+
+             p = value / stepen;
+             q = value % stepen;
+
+            result = q + result;
+
+            value = p;
+        }
+
+        return Integer.parseInt( result );
     }
 
     public int hashCode(){
         //Считаем текущую степень
         int level = getCurrentLevelNumSystem();
-        if(level <= 9){ //Если меньше 10 систмы
-            //Используем этот класс для преобразования в систему на степень выше
-            BigInteger temp = new BigInteger(String.valueOf(key));
-            String keyInString = temp.toString(level+1);
-            return Integer.valueOf(keyInString);
+        if(level < 9){ //Если меньше 10 систмы
+
+            int temp = To10System(p);
+            return From10ToAny(temp, p+1);
+
         }
         else{
             return key;
