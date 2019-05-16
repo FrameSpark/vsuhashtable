@@ -3,28 +3,26 @@ import java.util.Map;
 
 public class Key  {
 
-    private int key;
+    private int key; //Ключ
     private int p; //Текущая степень
+    private int q;//Следующая степень
 
+    //Степень в которую переводим не задана
     public Key(int key, int p) {
         this.key = key;
         this.p = p;
+        this.q = 0;
     }
 
-    //Ищем наибольшую цифру в ключе для определения системы счисления
-    private int getCurrentLevelNumSystem(){
-       int digit;
-       int k = key;
-       int max = k %10;
-        while (k != 0) {
-            digit = k % 10;
-            if(digit > max){
-                max = digit;
-            }
-            k /= 10;
-        }
-        return max+1;
+    //Степень в которую переводим задана
+    public Key(int key, int p, int q) {
+        this.key = key;
+        this.p = p;
+        if(q<=10 && q>0)
+            this.q = q;
+        else this.q=10;
     }
+
 
 
     public Object getKey() {
@@ -71,15 +69,22 @@ public class Key  {
 
     public int hashCode(){
         //Считаем текущую степень
-        int level = getCurrentLevelNumSystem();
-        if(level < 9){ //Если меньше 10 систмы
 
-            int temp = To10System(p);
-            return From10ToAny(temp, p+1);
+        //Если степень не задана, то переводим в степень p+1
+      if(q == 0){
+          //Переводим в 10тичную систему
+          int temp = To10System(p);
+          //Переводим из 10 в систему p+1
+          return From10ToAny(temp, p+1);
+      }
+      else{ //Если степень задана
+          int temp = To10System(p);
+          //Переводим из 10 в систему p+1
+          return From10ToAny(temp, q);
+      }
 
-        }
-        else{
-            return key;
-        }
+
+
+
     }
 }

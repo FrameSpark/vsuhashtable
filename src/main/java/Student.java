@@ -22,4 +22,6 @@ public class Student {
     public void setDocument(int document) {
         this.document = document;
     }
+
+
 }
